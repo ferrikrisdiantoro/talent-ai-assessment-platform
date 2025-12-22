@@ -142,7 +142,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-12 border-t border-white/5 bg-slate-950">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <p className="text-muted-foreground text-sm">&copy; {new Date().getFullYear()} TalentAI System. Built with ❤️ for Modern HR.</p>
+          <p className="text-muted-foreground text-sm">&copy; {new Date().getFullYear()} TalentAI System. All rights reserved.</p>
         </div>
       </footer>
     </div>

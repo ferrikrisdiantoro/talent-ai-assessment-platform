@@ -61,31 +61,29 @@ export default function NarrativeSection() {
     if (!narrative && !loading) {
         return (
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.01 }}
-                className="glass-panel rounded-2xl p-8 hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 group cursor-pointer relative overflow-hidden"
+                className="bg-gradient-to-br from-primary/5 to-blue-50 border-2 border-dashed border-primary/30 rounded-2xl p-10 hover:shadow-lg hover:border-primary/50 transition-all duration-300 group cursor-pointer"
                 onClick={generateNarrative}
             >
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                <div className="flex flex-col items-center justify-center text-center gap-4 relative z-10">
-                    <div className="p-4 bg-primary/20 rounded-2xl shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-500">
-                        <Wand2 className="w-8 h-8 text-primary animate-pulse" />
+                <div className="flex flex-col items-center justify-center text-center gap-4">
+                    <div className="p-4 bg-primary/10 rounded-2xl group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                        <Wand2 className="w-8 h-8 text-primary group-hover:text-white transition-colors" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-2xl text-white mb-2">Unlock AI Insights</h3>
-                        <p className="text-muted-foreground max-w-md mx-auto">
-                            Generate comprehensive analysis, uncover hidden strengths, and get tailored interview questions using Gemini AI.
+                        <h3 className="font-bold text-2xl text-slate-800 mb-2">Dapatkan Insight AI</h3>
+                        <p className="text-slate-500 max-w-md mx-auto">
+                            Generate analisis komprehensif, temukan kekuatan tersembunyi, dan dapatkan pertanyaan wawancara yang dipersonalisasi.
                         </p>
                     </div>
                     <button
-                        className="mt-4 px-6 py-3 btn-primary rounded-xl font-bold flex items-center gap-2 group-hover:shadow-primary/40 transition-all"
+                        className="mt-4 px-6 py-3 btn-primary rounded-xl font-bold flex items-center gap-2"
                     >
-                        <Sparkles className="w-4 h-4 animate-spin-slow" />
-                        Generate Analysis
+                        <Sparkles className="w-4 h-4" />
+                        Generate Analisis
                     </button>
-                    {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+                    {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                 </div>
             </motion.div>
         )
@@ -93,41 +91,38 @@ export default function NarrativeSection() {
 
     if (loading) {
         return (
-            <div className="glass-panel rounded-2xl p-12 flex flex-col items-center justify-center min-h-[400px]">
-                <div className="relative">
-                    <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse"></div>
-                    <Loader2 className="w-12 h-12 text-primary animate-spin relative z-10" />
-                </div>
-                <h3 className="mt-8 font-bold text-xl text-white animate-pulse">Analyzing Profile...</h3>
-                <p className="text-muted-foreground mt-2">Connecting to Gemini AI Neural Network</p>
+            <div className="bg-white border border-slate-200 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[300px] shadow-sm">
+                <Loader2 className="w-12 h-12 text-primary animate-spin" />
+                <h3 className="mt-6 font-bold text-xl text-slate-800">Menganalisis Profil...</h3>
+                <p className="text-slate-500 mt-2">AI sedang menyusun interpretasi komprehensif</p>
 
-                <div className="w-64 h-1 bg-white/10 rounded-full mt-6 overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-primary to-accent w-1/3 animate-[shimmer_1s_infinite_linear]"></div>
+                <div className="w-64 h-1.5 bg-slate-100 rounded-full mt-6 overflow-hidden">
+                    <div className="h-full bg-primary w-1/2 animate-pulse rounded-full"></div>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="glass-panel rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             {/* Header */}
             <button
                 onClick={() => setExpanded(!expanded)}
-                className="w-full px-8 py-6 flex items-center justify-between hover:bg-white/5 transition duration-300 group"
+                className="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition duration-200 group"
             >
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-xl border border-white/5 shadow-inner">
-                        <Sparkles className="w-6 h-6 text-indigo-400" />
+                    <div className="p-3 bg-primary/10 rounded-xl">
+                        <Sparkles className="w-6 h-6 text-primary" />
                     </div>
                     <div className="text-left">
-                        <h3 className="font-bold text-xl text-white group-hover:text-primary transition-colors">AI Analysis Result</h3>
-                        <p className="text-sm text-muted-foreground flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                            Generated by Gemini 2.5 Flash
+                        <h3 className="font-bold text-xl text-slate-800 group-hover:text-primary transition-colors">Hasil Analisis AI</h3>
+                        <p className="text-sm text-slate-500 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            Dihasilkan oleh Gemini AI
                         </p>
                     </div>
                 </div>
-                {expanded ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+                {expanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
             </button>
 
             {/* Content */}
@@ -141,26 +136,25 @@ export default function NarrativeSection() {
                         className="px-8 pb-8 space-y-6"
                     >
                         {/* Summary */}
-                        <motion.div variants={item} className="glass-card rounded-xl p-6 relative overflow-hidden group">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-transparent" />
-                            <h4 className="font-bold mb-3 flex items-center gap-2 text-white">
+                        <motion.div variants={item} className="bg-slate-50 border border-slate-100 rounded-xl p-6">
+                            <h4 className="font-bold mb-3 flex items-center gap-2 text-slate-800">
                                 <Target className="w-5 h-5 text-primary" />
-                                Executive Summary
+                                Ringkasan Profil
                             </h4>
-                            <p className="text-gray-300 leading-relaxed text-base">{narrative.summary}</p>
+                            <p className="text-slate-600 leading-relaxed">{narrative.summary}</p>
                         </motion.div>
 
                         <div className="grid md:grid-cols-2 gap-6">
                             {/* Strengths */}
-                            <motion.div variants={item} className="glass-card rounded-xl p-6 border-l-4 border-l-emerald-500/50">
-                                <h4 className="font-bold mb-4 flex items-center gap-2 text-emerald-400">
+                            <motion.div variants={item} className="bg-emerald-50 border border-emerald-100 rounded-xl p-6">
+                                <h4 className="font-bold mb-4 flex items-center gap-2 text-emerald-700">
                                     <Lightbulb className="w-5 h-5" />
-                                    Key Strengths
+                                    Kekuatan Utama
                                 </h4>
                                 <ul className="space-y-3">
                                     {narrative.strengths.map((s, i) => (
-                                        <motion.li key={i} variants={item} className="flex items-start gap-3 text-gray-300 bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/10 hover:bg-emerald-500/10 transition-colors">
-                                            <span className="text-emerald-400 mt-0.5 font-bold">✓</span>
+                                        <motion.li key={i} variants={item} className="flex items-start gap-3 text-emerald-800 bg-white p-3 rounded-lg border border-emerald-100">
+                                            <span className="text-emerald-500 mt-0.5 font-bold">✓</span>
                                             {s}
                                         </motion.li>
                                     ))}
@@ -168,15 +162,15 @@ export default function NarrativeSection() {
                             </motion.div>
 
                             {/* Development Areas */}
-                            <motion.div variants={item} className="glass-card rounded-xl p-6 border-l-4 border-l-amber-500/50">
-                                <h4 className="font-bold mb-4 flex items-center gap-2 text-amber-400">
+                            <motion.div variants={item} className="bg-amber-50 border border-amber-100 rounded-xl p-6">
+                                <h4 className="font-bold mb-4 flex items-center gap-2 text-amber-700">
                                     <Target className="w-5 h-5" />
-                                    Development Focus
+                                    Area Pengembangan
                                 </h4>
                                 <ul className="space-y-3">
                                     {narrative.developmentAreas.map((d, i) => (
-                                        <motion.li key={i} variants={item} className="flex items-start gap-3 text-gray-300 bg-amber-500/5 p-3 rounded-lg border border-amber-500/10 hover:bg-amber-500/10 transition-colors">
-                                            <span className="text-amber-400 mt-0.5 font-bold">→</span>
+                                        <motion.li key={i} variants={item} className="flex items-start gap-3 text-amber-800 bg-white p-3 rounded-lg border border-amber-100">
+                                            <span className="text-amber-500 mt-0.5 font-bold">→</span>
                                             {d}
                                         </motion.li>
                                     ))}
@@ -185,17 +179,17 @@ export default function NarrativeSection() {
                         </div>
 
                         {/* Recommendations */}
-                        <motion.div variants={item} className="glass-card rounded-xl p-6">
-                            <h4 className="font-bold mb-4 flex items-center gap-2 text-blue-400">
+                        <motion.div variants={item} className="bg-blue-50 border border-blue-100 rounded-xl p-6">
+                            <h4 className="font-bold mb-4 flex items-center gap-2 text-blue-700">
                                 <Target className="w-5 h-5" />
-                                Recommended Roles
+                                Rekomendasi Posisi
                             </h4>
                             <div className="flex flex-wrap gap-3">
                                 {narrative.recommendations.map((r, i) => (
                                     <motion.span
                                         key={i}
-                                        whileHover={{ scale: 1.05, y: -2 }}
-                                        className="px-4 py-2 bg-blue-500/10 text-blue-300 border border-blue-500/20 rounded-full text-sm font-medium hover:bg-blue-500/20 hover:border-blue-400 transition-all cursor-default shadow-lg shadow-blue-900/10"
+                                        whileHover={{ scale: 1.05 }}
+                                        className="px-4 py-2 bg-white text-blue-700 border border-blue-200 rounded-full text-sm font-semibold hover:bg-blue-100 transition-colors cursor-default"
                                     >
                                         {r}
                                     </motion.span>
@@ -204,16 +198,16 @@ export default function NarrativeSection() {
                         </motion.div>
 
                         {/* Interview Suggestions */}
-                        <motion.div variants={item} className="glass-card rounded-xl p-6 border-t-4 border-t-purple-500/50">
-                            <h4 className="font-bold mb-4 flex items-center gap-2 text-purple-400">
+                        <motion.div variants={item} className="bg-purple-50 border border-purple-100 rounded-xl p-6">
+                            <h4 className="font-bold mb-4 flex items-center gap-2 text-purple-700">
                                 <MessageSquare className="w-5 h-5" />
-                                Interview Guide
+                                Panduan Wawancara
                             </h4>
                             <ul className="space-y-3">
                                 {narrative.interviewSuggestions.map((q, i) => (
-                                    <motion.li key={i} variants={item} className="text-gray-300 flex items-start gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors">
-                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-xs font-bold mt-0.5">{i + 1}</span>
-                                        <span className="italic">"{q}"</span>
+                                    <motion.li key={i} variants={item} className="text-purple-800 flex items-start gap-3 p-3 hover:bg-white rounded-lg transition-colors">
+                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                                        <span>"{q}"</span>
                                     </motion.li>
                                 ))}
                             </ul>
@@ -223,22 +217,15 @@ export default function NarrativeSection() {
                         <motion.div variants={item} className="text-center pt-4">
                             <button
                                 onClick={generateNarrative}
-                                className="text-sm text-muted-foreground hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
+                                className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center justify-center gap-2 mx-auto font-medium"
                             >
                                 <Sparkles className="w-4 h-4" />
-                                Regenerate Analysis
+                                Regenerate Analisis
                             </button>
                         </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            <style jsx global>{`
-                @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(100%); }
-                }
-            `}</style>
         </div>
     )
 }

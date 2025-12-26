@@ -2,19 +2,21 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2, Mail, Lock, User, Brain } from 'lucide-react'
+import { Check, Loader2, Mail, Lock, User, ArrowRight, Sparkles, Brain, Target } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import { login } from '@/app/auth/login/action'
 import { signup } from '@/app/auth/signup/action'
+import { useToast } from '@/components/Toast'
 
 export default function LoginPage() {
     const [mode, setMode] = useState<'login' | 'signup'>('login')
     const [loading, setLoading] = useState(false)
-    const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+    const toast = useToast()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
-        setMessage(null)
 
         const formData = new FormData(e.currentTarget)
 
@@ -26,9 +28,9 @@ export default function LoginPage() {
         }
 
         if (result?.error) {
-            setMessage({ text: result.error, type: 'error' })
+            toast.error(result.error)
         } else if (result && 'success' in result && result.success) {
-            setMessage({ text: result.message, type: 'success' })
+            toast.success(result.message)
             if (mode === 'signup') {
                 // optionally switch to login or just show check email
             }
@@ -38,78 +40,130 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-background px-4">
-            <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="text-center">
-                    <div className="mx-auto h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4">
-                        <Brain className="h-6 w-6" />
-                    </div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                        {mode === 'login' ? 'Welcome Back' : 'Create Account'}
-                    </h2>
-                    <p className="mt-2 text-sm text-foreground/60">
-                        {mode === 'login'
-                            ? 'Enter your credentials to access your dashboard'
-                            : 'Sign up to start your assessment journey'}
-                    </p>
+        <div className="flex min-h-screen lg:h-screen bg-slate-50 lg:overflow-hidden">
+            {/* Left Side - Illustration (Hidden on mobile) */}
+            <div className="hidden lg:flex lg:w-1/2 relative bg-blue-600 text-white p-12 flex-col justify-between overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
                 </div>
 
-                <div className="bg-card px-8 py-10 shadow-xl border border-border rounded-2xl">
+                {/* Content */}
+                <div className="relative z-10">
+                    <Link href="/" className="flex items-center gap-3 mb-8 hover:opacity-90 transition">
+                        <Image
+                            src="/logo.jpg"
+                            alt="Humania Logo"
+                            width={48}
+                            height={48}
+                            className="w-12 h-12 rounded-xl shadow-lg"
+                            priority
+                        />
+                        <span className="font-bold text-2xl tracking-tight text-white">Humania TalentMap</span>
+                    </Link>
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center justify-center flex-1">
+                    {/* Vector Illustration with Animation */}
+                    <div className="relative w-full max-w-md mb-8 animate-in fade-in zoom-in-95 duration-700">
+                        <div className="animate-[float_6s_ease-in-out_infinite]">
+                            <Image
+                                src="/vector-login.png"
+                                alt="Talent Assessment Illustration"
+                                width={400}
+                                height={400}
+                                className="w-full h-auto drop-shadow-2xl"
+                                priority
+                            />
+                        </div>
+                    </div>
+
+                    <div className="text-center max-w-md">
+                        <h2 className="text-2xl font-bold mb-3">Temukan Potensi Terbaikmu</h2>
+                        <p className="text-blue-100 text-base leading-relaxed">
+                            Platform assessment cerdas untuk memetakan bakat dan kepribadian profesional secara akurat.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="relative z-10 text-sm text-blue-200 text-center">
+                    &copy; 2025 Humania TalentMap.
+                </div>
+            </div>
+
+            {/* Right Side - Form */}
+            <div className="w-full lg:w-1/2 flex flex-col justify-center px-4 py-6 md:p-6 lg:p-12 min-h-[100dvh] lg:min-h-0">
+                <div className="w-full max-w-md mx-auto space-y-5 md:space-y-6">
+                    <div className="text-center lg:text-left">
+                        <Link href="/" className="lg:hidden inline-flex items-center gap-2 mb-6">
+                            <span className="font-bold text-xl text-blue-600">Humania TalentMap</span>
+                        </Link>
+                        <h2 className="text-2xl font-bold tracking-tight text-slate-800">
+                            {mode === 'login' ? 'Selamat Datang' : 'Mulai Sekarang'}
+                        </h2>
+                        <p className="mt-1 text-slate-500 text-sm">
+                            {mode === 'login'
+                                ? 'Masuk untuk mengakses dashboard assessment Anda.'
+                                : 'Buat akun baru dalam hitungan detik.'}
+                        </p>
+                    </div>
+
                     {/* Tabs */}
-                    <div className="flex mb-8 bg-background/50 p-1 rounded-lg border border-border">
+                    <div className="bg-slate-100 p-1 rounded-xl inline-flex w-full">
                         <button
-                            onClick={() => { setMode('login'); setMessage(null); }}
-                            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${mode === 'login' ? 'bg-primary text-white shadow' : 'text-foreground/70 hover:text-foreground'}`}
+                            onClick={() => { setMode('login') }}
+                            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${mode === 'login' ? 'bg-white text-blue-700 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
                         >
-                            Sign In
+                            Masuk
                         </button>
                         <button
-                            onClick={() => { setMode('signup'); setMessage(null); }}
-                            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${mode === 'signup' ? 'bg-primary text-white shadow' : 'text-foreground/70 hover:text-foreground'}`}
+                            onClick={() => { setMode('signup') }}
+                            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${mode === 'signup' ? 'bg-white text-blue-700 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
                         >
-                            Sign Up
+                            Daftar
                         </button>
                     </div>
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+                    <form className="space-y-4" onSubmit={handleSubmit}>
                         {mode === 'signup' && (
-                            <div>
-                                <label className="block text-xs uppercase font-bold text-foreground/50 mb-1.5 ml-1">Full Name</label>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nama Lengkap</label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-foreground/40">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                         <User className="h-4 w-4" />
                                     </div>
                                     <input
                                         name="full_name"
                                         type="text"
                                         required
-                                        className="block w-full rounded-xl border-border bg-background pl-10 pr-3 py-2.5 text-foreground shadow-sm focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm outline-none transition"
-                                        placeholder="John Doe"
+                                        className="block w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2.5 text-slate-800 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm outline-none transition"
+                                        placeholder="Nama Lengkap Anda"
                                     />
                                 </div>
                             </div>
                         )}
 
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-foreground/50 mb-1.5 ml-1">Email</label>
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Email</label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-foreground/40">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                     <Mail className="h-4 w-4" />
                                 </div>
                                 <input
                                     name="email"
                                     type="email"
                                     required
-                                    className="block w-full rounded-xl border-border bg-background pl-10 pr-3 py-2.5 text-foreground shadow-sm focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm outline-none transition"
-                                    placeholder="you@example.com"
+                                    className="block w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2.5 text-slate-800 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm outline-none transition"
+                                    placeholder="anda@perusahaan.com"
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-foreground/50 mb-1.5 ml-1">Password</label>
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Password</label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-foreground/40">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                     <Lock className="h-4 w-4" />
                                 </div>
                                 <input
@@ -117,35 +171,30 @@ export default function LoginPage() {
                                     type="password"
                                     required
                                     minLength={6}
-                                    className="block w-full rounded-xl border-border bg-background pl-10 pr-3 py-2.5 text-foreground shadow-sm focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm outline-none transition"
+                                    className="block w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2.5 text-slate-800 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm outline-none transition"
                                     placeholder="••••••••"
                                 />
                             </div>
                         </div>
 
+                        {mode === 'login' && (
+                            <div className="flex items-center justify-end">
+                                <Link href="/forgot-password" className="text-xs font-medium text-blue-600 hover:text-blue-500 transition">
+                                    Lupa password?
+                                </Link>
+                            </div>
+                        )}
+
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex w-full justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-primary/20 text-sm font-bold text-white bg-primary hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 transition transform active:scale-95"
+                            className="flex w-full justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-blue-500/20 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed transition transform active:scale-[0.98]"
                         >
-                            {loading ? <Loader2 className="animate-spin h-5 w-5" /> : (mode === 'login' ? 'Sign In' : 'Create Account')}
+                            {loading ? <Loader2 className="animate-spin h-5 w-5" /> : (mode === 'login' ? 'Masuk ke Dashboard' : 'Buat Akun Baru')}
+                            {!loading && <ArrowRight className="w-4 h-4" />}
                         </button>
                     </form>
-
-                    {message && (
-                        <div className={`mt-6 p-4 rounded-lg text-sm border flex items-start gap-3 ${message.type === 'success'
-                            ? 'bg-green-50 border-green-200 text-green-700'
-                            : 'bg-red-50 border-red-200 text-red-700'
-                            }`}>
-                            {message.type === 'success' ? <Check className="h-5 w-5 shrink-0" /> : <div className="h-5 w-5 shrink-0 font-bold">!</div>}
-                            <p>{message.text}</p>
-                        </div>
-                    )}
                 </div>
-
-                <p className="text-center text-xs text-foreground/40">
-                    &copy; 2025 TalentAI. Secure Assessment Platform.
-                </p>
             </div>
         </div>
     )

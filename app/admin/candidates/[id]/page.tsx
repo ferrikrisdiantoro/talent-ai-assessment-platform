@@ -1,12 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, BarChart3, AlertTriangle, Layers } from 'lucide-react'
+import { ArrowLeft, Download, User, Mail, Calendar, BarChart3, Layers, AlertTriangle } from 'lucide-react'
 import { DISCLAIMER_TEXT } from '@/lib/dimensions'
-import NarrativeSection from './NarrativeSection'
-import CandidatePDFButton from './CandidatePDFButton'
+import GeneratePDFButton from './GeneratePDFButton'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
-// Type for score with assessment info
 interface ScoreWithAssessment {
     id: string
     dimension: string
@@ -21,19 +20,37 @@ interface ScoreWithAssessment {
     } | null
 }
 
-export default async function ResultsPage() {
+export default async function AdminCandidateDetailPage({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) {
+    const { id: candidateId } = await params
     const supabase = await createClient()
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    // Create a service client for admin operations (bypasses RLS)
+    const serviceClient = createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-    if (!user) {
-        redirect('/login')
+    // Fetch candidate profile
+    const { data: profile } = await serviceClient
+        .from('profiles')
+        .select('id, full_name, created_at')
+        .eq('id', candidateId)
+        .single()
+
+    if (!profile) {
+        notFound()
     }
 
-    // Fetch all scores for this user with assessment info
-    const { data: scores, error } = await supabase
+    // Fetch user email from auth using service client
+    const { data: authData } = await serviceClient.auth.admin.getUserById(candidateId)
+    const email = authData?.user?.email || 'N/A'
+
+    // Fetch all scores for this user using service client (bypasses RLS)
+    const { data: scores, error: scoresError } = await serviceClient
         .from('scores')
         .select(`
             id,
@@ -48,11 +65,11 @@ export default async function ResultsPage() {
                 type
             )
         `)
-        .eq('user_id', user.id)
+        .eq('user_id', candidateId)
         .order('created_at', { ascending: false })
 
-    if (error) {
-        console.error('Error fetching scores:', error)
+    if (scoresError) {
+        console.error('Error fetching scores:', scoresError)
     }
 
     // Group scores by assessment
@@ -84,34 +101,65 @@ export default async function ResultsPage() {
 
     const hasScores = Object.keys(scoresByAssessment).length > 0
 
+    // Calculate overall stats
+    const allTotalScores = scores?.filter(s => s.dimension === 'Total').map(s => s.normalized_score) || []
+    const overallAvg = allTotalScores.length > 0
+        ? Math.round(allTotalScores.reduce((a, b) => a + b, 0) / allTotalScores.length)
+        : 0
+
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <Link href="/dashboard" className="p-3 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition group shadow-sm">
-                        <ArrowLeft className="w-5 h-5 text-slate-500 group-hover:text-primary" />
-                    </Link>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Hasil Assessment</h1>
-                        <p className="text-slate-500 mt-1">Analisis detail profil psikometri Anda.</p>
-                    </div>
+        <div className="space-y-8">
+            {/* Header */}
+            <div className="flex items-center gap-4">
+                <Link href="/admin/candidates" className="p-3 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition group shadow-sm">
+                    <ArrowLeft className="w-5 h-5 text-slate-500 group-hover:text-primary" />
+                </Link>
+                <div className="flex-1">
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-800">Profil Kandidat</h1>
+                    <p className="text-slate-500 mt-1">Detail hasil assessment kandidat.</p>
                 </div>
                 {hasScores && (
-                    <CandidatePDFButton
-                        candidateName={user.user_metadata?.full_name || user.email?.split('@')[0] || 'Kandidat'}
-                        candidateEmail={user.email || ''}
-                        scores={scores?.map(s => {
-                            const assessmentData = Array.isArray(s.assessments) ? s.assessments[0] : s.assessments
-                            return {
-                                dimension: s.dimension,
-                                normalized_score: s.normalized_score,
-                                category: s.category,
-                                assessment_code: assessmentData?.code || 'N/A',
-                                assessment_title: assessmentData?.title || 'N/A'
-                            }
-                        }) || []}
+                    <GeneratePDFButton
+                        candidateName={profile.full_name || 'Kandidat'}
+                        candidateEmail={email}
+                        scoresByAssessment={scoresByAssessment}
+                        overallScore={overallAvg}
                     />
                 )}
+            </div>
+
+            {/* Candidate Info Card */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                            {profile.full_name?.[0]?.toUpperCase() || 'K'}
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-800">{profile.full_name || 'Tanpa Nama'}</h2>
+                            <div className="flex items-center gap-4 text-sm text-slate-500 mt-1">
+                                <span className="flex items-center gap-1.5">
+                                    <Mail className="w-4 h-4" />
+                                    {email}
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <Calendar className="w-4 h-4" />
+                                    Bergabung {new Date(profile.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {hasScores && (
+                        <div className="flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-xl border border-slate-100">
+                            <div className="text-right">
+                                <div className="text-xs text-slate-500 font-medium uppercase">Skor Rata-rata</div>
+                                <div className="text-3xl font-bold text-primary">{overallAvg}</div>
+                            </div>
+                            <CategoryBadge score={overallAvg} size="lg" />
+                        </div>
+                    )}
+                </div>
             </div>
 
             {!hasScores ? (
@@ -120,26 +168,17 @@ export default async function ResultsPage() {
                         <BarChart3 className="w-10 h-10 text-slate-400" />
                     </div>
                     <h3 className="text-2xl font-bold text-slate-800 mb-2">Belum Ada Hasil</h3>
-                    <p className="text-slate-500 mb-8 max-w-sm mx-auto">
-                        Perjalanan assessment Anda dimulai di sini. Selesaikan modul untuk melihat profil profesional Anda.
+                    <p className="text-slate-500 max-w-sm mx-auto">
+                        Kandidat ini belum menyelesaikan assessment apapun.
                     </p>
-                    <Link
-                        href="/dashboard"
-                        className="inline-flex items-center gap-2 px-8 py-4 btn-primary rounded-xl font-bold"
-                    >
-                        Mulai Assessment
-                    </Link>
                 </div>
             ) : (
                 <>
-                    {/* AI Narrative Section */}
-                    <NarrativeSection />
-
                     {/* Scores by Module */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 ml-1">
                             <Layers className="w-5 h-5 text-primary" />
-                            Detail Per Dimensi
+                            Detail Hasil Per Modul
                         </h2>
 
                         {Object.entries(scoresByAssessment).map(([moduleCode, moduleScores], index) => {
@@ -150,8 +189,7 @@ export default async function ResultsPage() {
                             return (
                                 <div
                                     key={moduleCode}
-                                    className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500"
-                                    style={{ animationDelay: `${index * 100}ms` }}
+                                    className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm"
                                 >
                                     {/* Module Header */}
                                     <div className="px-8 py-6 border-b border-slate-100 bg-slate-50 flex flex-wrap justify-between items-center gap-4">
@@ -171,7 +209,7 @@ export default async function ResultsPage() {
                                                         {totalScore.normalized_score}<span className="text-sm text-slate-400 ml-1">/100</span>
                                                     </div>
                                                 </div>
-                                                <CategoryBadge category={totalScore.category} size="lg" />
+                                                <CategoryBadge score={totalScore.normalized_score} size="lg" />
                                             </div>
                                         )}
                                     </div>
@@ -185,8 +223,8 @@ export default async function ResultsPage() {
                                                     className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:shadow-md hover:border-slate-200 transition-all duration-300 group"
                                                 >
                                                     <div className="flex justify-between items-start mb-3">
-                                                        <span className="font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">{score.dimension}</span>
-                                                        <CategoryBadge category={score.category} size="sm" />
+                                                        <span className="font-semibold text-slate-700">{score.dimension}</span>
+                                                        <CategoryBadge score={score.normalized_score} size="sm" />
                                                     </div>
 
                                                     <div className="flex items-end gap-2 mb-3">
@@ -196,7 +234,7 @@ export default async function ResultsPage() {
                                                     {/* Progress bar */}
                                                     <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden">
                                                         <div
-                                                            className={`h-full rounded-full transition-all duration-700 ${getCategoryGradient(score.category)}`}
+                                                            className={`h-full rounded-full transition-all duration-700 ${getCategoryGradient(score.normalized_score)}`}
                                                             style={{ width: `${score.normalized_score}%` }}
                                                         />
                                                     </div>
@@ -224,11 +262,16 @@ export default async function ResultsPage() {
     )
 }
 
-function CategoryBadge({ category, size = 'md' }: { category: string; size?: 'sm' | 'md' | 'lg' }) {
-    const styles = {
-        Low: 'bg-red-100 text-red-700 border-red-200',
-        Medium: 'bg-amber-100 text-amber-700 border-amber-200',
-        High: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+function CategoryBadge({ score, size = 'md' }: { score: number; size?: 'sm' | 'md' | 'lg' }) {
+    let category = 'Low'
+    let styles = 'bg-red-100 text-red-700 border-red-200'
+
+    if (score >= 71) {
+        category = 'High'
+        styles = 'bg-emerald-100 text-emerald-700 border-emerald-200'
+    } else if (score >= 41) {
+        category = 'Medium'
+        styles = 'bg-amber-100 text-amber-700 border-amber-200'
     }
 
     let sizeClasses = 'text-xs px-2.5 py-1'
@@ -236,17 +279,14 @@ function CategoryBadge({ category, size = 'md' }: { category: string; size?: 'sm
     if (size === 'lg') sizeClasses = 'text-sm px-3 py-1.5'
 
     return (
-        <span className={`${styles[category as keyof typeof styles] || 'bg-slate-100 text-slate-600'} ${sizeClasses} rounded-lg border font-bold uppercase tracking-wider`}>
+        <span className={`${styles} ${sizeClasses} rounded-lg border font-bold uppercase tracking-wider`}>
             {category}
         </span>
     )
 }
 
-function getCategoryGradient(category: string): string {
-    switch (category) {
-        case 'Low': return 'bg-gradient-to-r from-red-500 to-red-400'
-        case 'Medium': return 'bg-gradient-to-r from-amber-500 to-amber-400'
-        case 'High': return 'bg-gradient-to-r from-emerald-500 to-emerald-400'
-        default: return 'bg-gradient-to-r from-slate-500 to-slate-400'
-    }
+function getCategoryGradient(score: number): string {
+    if (score >= 71) return 'bg-gradient-to-r from-emerald-500 to-emerald-400'
+    if (score >= 41) return 'bg-gradient-to-r from-amber-500 to-amber-400'
+    return 'bg-gradient-to-r from-red-500 to-red-400'
 }

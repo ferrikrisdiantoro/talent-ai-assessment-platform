@@ -1,41 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  /* Deep Navy Glassmorphism Theme */
-  --background: #0f172a;
-  /* Slate 900 */
-  --foreground: #f8fafc;
-  /* Slate 50 */
+  /* Humania TalentMap - Clean White Theme */
+  --background: #FFFFFF;
+  --foreground: #1e293b;
+  /* Slate 800 for text */
 
-  --card: #1e293b;
-  /* Slate 800 */
-  --card-foreground: #f8fafc;
+  --card: #FFFFFF;
+  --card-foreground: #1e293b;
 
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
+  --popover: #FFFFFF;
+  --popover-foreground: #1e293b;
 
-  --primary: #38bdf8;
-  /* Sky 400 */
-  --primary-foreground: #0f172a;
+  --primary: #1D4ED8;
+  /* Humania Blue */
+  --primary-foreground: #FFFFFF;
 
-  --secondary: #334155;
-  /* Slate 700 */
-  --secondary-foreground: #f8fafc;
+  --secondary: #f1f5f9;
+  /* Slate 100 */
+  --secondary-foreground: #1e293b;
 
-  --muted: #334155;
-  --muted-foreground: #94a3b8;
-  /* Slate 400 */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  /* Slate 500 */
 
-  --accent: #0ea5e9;
-  /* Sky 500 */
-  --accent-foreground: #f8fafc;
+  --accent: #1D4ED8;
+  --accent-foreground: #FFFFFF;
 
-  --destructive: #ef4444;
-  --destructive-foreground: #f8fafc;
+  --destructive: #dc2626;
+  --destructive-foreground: #FFFFFF;
 
-  --border: #334155;
-  --input: #334155;
-  --ring: #38bdf8;
+  --border: #e2e8f0;
+  /* Slate 200 */
+  --input: #e2e8f0;
+  --ring: #1D4ED8;
 
   --radius: 0.75rem;
 }
@@ -66,66 +64,53 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-glow: pulse-glow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-@keyframes pulse-glow {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: .5;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), sans-serif;
-  background-image:
-    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
-  background-attachment: fixed;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-/* Glassmorphism Utilities */
-.glass-panel {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
+/* Clean Modern Utilities - Light Theme */
+.card-elevated {
+  @apply bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300 rounded-xl;
 }
 
-.glass-card {
-  @apply bg-slate-800/50 backdrop-blur-md border border-slate-700/50 hover:border-slate-600 transition-all duration-300 hover:shadow-lg hover:shadow-sky-900/20;
+.card-flat {
+  @apply bg-slate-50 border border-slate-100 rounded-xl;
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500;
 }
 
 .btn-primary {
-  @apply bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-lg shadow-sky-900/20 transition-all active:scale-95;
+  @apply bg-primary hover:bg-primary/90 text-white font-semibold shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98];
 }
 
 .btn-secondary {
-  @apply bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all border border-white/10;
+  @apply bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold transition-all duration-200 border border-slate-200;
+}
+
+.btn-outline {
+  @apply bg-transparent border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold transition-all duration-200;
+}
+
+/* Focus states */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+/* Custom Animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
 }

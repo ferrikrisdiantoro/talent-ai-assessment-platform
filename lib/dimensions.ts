@@ -62,7 +62,7 @@ export const LIKERT_MAX = 5
 
 // Disclaimer text (required on all results)
 export const DISCLAIMER_TEXT = `
-**DISCLAIMER / PENYANGKALAN:**
+DISCLAIMER / PENYANGKALAN:
 
 Hasil asesmen ini merupakan alat bantu pengambilan keputusan (decision support) dan BUKAN penentu keputusan akhir dalam proses rekrutmen. 
 Interpretasi hasil harus dilakukan oleh profesional HR yang berkompeten dengan mempertimbangkan konteks posisi, budaya organisasi, dan faktor-faktor lainnya.
@@ -70,7 +70,7 @@ Interpretasi hasil harus dilakukan oleh profesional HR yang berkompeten dengan m
 Asesmen ini tidak bersifat diagnostik klinis dan tidak dapat digunakan untuk mendiagnosis kondisi psikologis apapun.
 Hasil tes ini bersifat rahasia dan hanya boleh diakses oleh pihak yang berwenang dalam proses rekrutmen.
 
-© ${new Date().getFullYear()} TalentAI Assessment Platform. All rights reserved.
+© ${new Date().getFullYear()} Humania TalentMap. All rights reserved.
 `.trim()
 
 // Short disclaimer for inline use

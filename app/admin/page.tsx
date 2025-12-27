@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Plus, Users, FileText } from 'lucide-react'
@@ -7,22 +8,33 @@ import DeleteAssessmentButton from './DeleteAssessmentButton'
 export default async function AdminDashboardPage() {
     const supabase = await createClient()
 
+    // Service client for admin operations (bypasses RLS)
+    const serviceClient = createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     // Fetch assessments
     const { data: assessments } = await supabase
         .from('assessments')
         .select('*')
         .order('created_at', { ascending: false })
 
-    // Fetch candidate count
-    const { count: candidateCount } = await supabase
+    // Fetch candidate count (needs service client to bypass RLS)
+    const { count: candidateCount } = await serviceClient
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .eq('role', 'candidate')
 
-    // Fetch completed assessments count
-    const { count: completedCount } = await supabase
+    // Fetch completed assessments count - count unique user_id entries in scores
+    // This counts how many users have at least one score (meaning they completed at least one module)
+    const { data: completedData } = await serviceClient
         .from('scores')
-        .select('*', { count: 'exact', head: true })
+        .select('user_id')
+
+    // Count unique users who have completed assessments
+    const uniqueUsers = new Set(completedData?.map(s => s.user_id) || [])
+    const completedCount = uniqueUsers.size
 
     return (
         <div className="space-y-5 md:space-y-8">

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 
 export async function signup(formData: FormData) {
@@ -11,7 +12,7 @@ export async function signup(formData: FormData) {
     const password = formData.get('password') as string
     const fullName = formData.get('full_name') as string
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -25,18 +26,26 @@ export async function signup(formData: FormData) {
         return { error: error.message }
     }
 
-    // Manually insert into profiles if trigger fails or just to be safe/explicit?
-    // Supabase Auth usually handles user creation, but our 'profiles' table relies on triggers or manual insert.
-    // The schema has a trigger? Let's check schema.sql.
-    // Actually, I didn't add a trigger in the schema.sql I wrote earlier. I should probably add one or handle it here.
-    // Let's handle it here for safety since I can't easily check triggers without SQL tool.
+    // Create profile entry for the new user with 'candidate' role
+    if (data.user) {
+        const serviceClient = createServiceClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        )
 
-    // Wait, signUp returns a user.
-    // If email confirmation is on, user is created but maybe not actionable.
-    // Let's assume for MVP we might want to disable email confirmation or just handle profile creation on first login if it doesn't exist.
-    // But let's try to insert profile here if we can. 
-    // Actually, 'profiles' has a foreign key to auth.users. We can't insert if auth.users insert failed.
-    // If signUp succeeds, user exists.
+        const { error: profileError } = await serviceClient
+            .from('profiles')
+            .insert({
+                id: data.user.id,
+                full_name: fullName,
+                role: 'candidate'
+            })
+
+        if (profileError) {
+            console.error('Error creating profile:', profileError)
+            // Don't return error to user as auth signup succeeded
+        }
+    }
 
     return { success: true, message: 'Check your email to confirm your account.' }
 }

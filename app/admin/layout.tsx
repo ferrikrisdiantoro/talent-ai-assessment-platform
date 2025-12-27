@@ -134,7 +134,7 @@ export default async function AdminLayout({
             </div>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-72 pt-16 md:pt-0 p-4 md:p-8 min-h-screen">
+            <main className="flex-1 md:ml-72 pt-16 md:pt-8 p-4 md:p-8 min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     {children}
                 </div>

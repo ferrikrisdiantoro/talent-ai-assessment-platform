@@ -24,7 +24,7 @@ export default async function RecruiterCandidatesPage() {
     // Get all candidates invited by this recruiter (who have registered)
     const { data: candidates } = await serviceClient
         .from('profiles')
-        .select('*, auth_users:id(email)')
+        .select('*, invitations(email)')
         .eq('invited_by', user?.id)
         .order('created_at', { ascending: false })
 
@@ -38,6 +38,7 @@ export default async function RecruiterCandidatesPage() {
             .from('assessment_sessions')
             .select('user_id, status')
             .in('user_id', candidateIds)
+            .in('status', ['completed']) // Fixed: use .in for better compatibility if needed, though .eq works
 
         // Check for reports
         const { data: reports } = await serviceClient
@@ -80,8 +81,11 @@ export default async function RecruiterCandidatesPage() {
                     </div>
                 </div>
                 <div className="divide-y divide-slate-100">
-                    {candidates?.map((candidate) => {
+                    {candidates?.map((candidate: any) => {
                         const status = candidateStatus[candidate.id]
+                        // Get email from invitations join or fallback
+                        const candidateEmail = candidate.invitations?.email || '-'
+
                         return (
                             <div key={candidate.id} className="p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50 transition">
                                 <div className="flex items-center gap-4">
@@ -90,7 +94,7 @@ export default async function RecruiterCandidatesPage() {
                                     </div>
                                     <div>
                                         <p className="font-semibold text-slate-800">{candidate.full_name || 'Tanpa Nama'}</p>
-                                        <p className="text-sm text-slate-500">{candidate.auth_users?.email || '-'}</p>
+                                        <p className="text-sm text-slate-500">{candidateEmail}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 ml-16 md:ml-0">
@@ -105,7 +109,7 @@ export default async function RecruiterCandidatesPage() {
                                             Dalam Proses
                                         </span>
                                     )}
-                                    {status?.hasReport && (
+                                    {(status?.completed || status?.hasReport) && (
                                         <Link
                                             href={`/recruiter/candidates/${candidate.id}`}
                                             className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition"

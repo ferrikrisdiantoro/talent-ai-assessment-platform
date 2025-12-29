@@ -124,10 +124,11 @@ export async function acceptInvitation(formData: FormData) {
         return { error: 'Gagal membuat akun' }
     }
 
-    // Create profile linked to recruiter
+    // Create or update profile linked to recruiter
+    // Note: Database trigger handle_new_user might have already created the profile
     const { error: profileError } = await serviceClient
         .from('profiles')
-        .insert({
+        .upsert({
             id: authData.user.id,
             full_name: fullName,
             role: 'candidate',
@@ -138,7 +139,15 @@ export async function acceptInvitation(formData: FormData) {
 
     if (profileError) {
         console.error('Profile error:', profileError)
-        // Don't fail if profile creation fails
+        // Try update if upsert fails (though upsert should handle it)
+        await serviceClient
+            .from('profiles')
+            .update({
+                organization_id: invitation.organization_id,
+                invited_by: invitation.recruiter_id,
+                invitation_id: invitation.id
+            })
+            .eq('id', authData.user.id)
     }
 
     // Update invitation status

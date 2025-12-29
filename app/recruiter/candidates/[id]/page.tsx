@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Mail, Calendar, BarChart3, Layers, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Mail, Calendar, BarChart3, Layers, AlertTriangle, Brain, Sparkles, Target, MessageSquare, AlertCircle } from 'lucide-react'
 import { DISCLAIMER_TEXT } from '@/lib/dimensions'
 import GeneratePDFButton from '@/app/admin/candidates/[id]/GeneratePDFButton'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
@@ -84,6 +84,15 @@ export default async function RecruiterCandidateDetailPage({
     // Fetch user email from auth
     const { data: authData } = await serviceClient.auth.admin.getUserById(candidateId)
     const email = authData?.user?.email || 'N/A'
+
+    // Fetch AI report
+    const { data: report } = await serviceClient
+        .from('reports')
+        .select('summary, details')
+        .eq('user_id', candidateId)
+        .single()
+
+    const narrative = report?.details
 
     // Fetch all scores for this user
     const { data: scores, error: scoresError } = await serviceClient
@@ -197,6 +206,90 @@ export default async function RecruiterCandidateDetailPage({
                     )}
                 </div>
             </div>
+
+            {/* AI Narrative Section */}
+            {narrative && (
+                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-violet-50 to-white flex items-center gap-3">
+                        <div className="p-2 bg-violet-100 rounded-lg">
+                            <Brain className="w-5 h-5 text-violet-600" />
+                        </div>
+                        <div>
+                            <h2 className="font-bold text-lg text-slate-800">Analisis AI & Insight</h2>
+                            <p className="text-xs text-slate-500">Dibuat otomatis oleh Gemini AI berdasarkan hasil skor.</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6 md:p-8 space-y-8">
+                        {/* Executive Summary */}
+                        <div className="space-y-3">
+                            <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-amber-500" />
+                                Ringkasan Eksekutif
+                            </h3>
+                            <div className="bg-slate-50 p-4 rounded-xl text-slate-700 leading-relaxed text-sm md:text-base border border-slate-100">
+                                {narrative.executiveSummary || narrative.summary}
+                            </div>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-8">
+                            {/* Strengths */}
+                            <div className="space-y-4">
+                                <h3 className="font-bold text-emerald-700 flex items-center gap-2">
+                                    <Target className="w-4 h-4" />
+                                    Kekuatan Utama
+                                </h3>
+                                <ul className="space-y-3">
+                                    {narrative.strengths?.map((strength: string, i: number) => (
+                                        <li key={i} className="flex gap-3 text-sm text-slate-600 bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                            <span className="flex-shrink-0 w-5 h-5 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xs font-bold">
+                                                {i + 1}
+                                            </span>
+                                            {strength}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            {/* Areas for Improvement */}
+                            <div className="space-y-4">
+                                <h3 className="font-bold text-amber-700 flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" />
+                                    Area Pengembangan
+                                </h3>
+                                <ul className="space-y-3">
+                                    {narrative.areasForImprovement?.map((area: string, i: number) => (
+                                        <li key={i} className="flex gap-3 text-sm text-slate-600 bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                                            <span className="flex-shrink-0 w-5 h-5 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xs font-bold">
+                                                {i + 1}
+                                            </span>
+                                            {area}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Interview Questions */}
+                        {narrative.interviewQuestions && narrative.interviewQuestions.length > 0 && (
+                            <div className="space-y-4 pt-4 border-t border-slate-100">
+                                <h3 className="font-bold text-blue-700 flex items-center gap-2">
+                                    <MessageSquare className="w-4 h-4" />
+                                    Saran Pertanyaan Wawancara
+                                </h3>
+                                <div className="grid gap-4 md:grid-cols-2">
+                                    {narrative.interviewQuestions.map((q: any, i: number) => (
+                                        <div key={i} className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                                            <p className="font-semibold text-slate-800 text-sm mb-2">"{q.question}"</p>
+                                            <p className="text-xs text-slate-500 italic">Target: {q.context}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {!hasScores ? (
                 <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-16 text-center">

@@ -29,9 +29,11 @@ export async function login(formData: FormData) {
 
         revalidatePath('/', 'layout')
 
-        // Admin goes to admin panel, candidates go to dashboard
+        // Role-based redirects
         if (profile?.role === 'admin') {
             redirect('/admin')
+        } else if (profile?.role === 'recruiter') {
+            redirect('/recruiter')
         }
     }
 

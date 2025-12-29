@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2, Mail, Lock, User, ArrowRight, Sparkles, Brain, Target } from 'lucide-react'
+import { Check, Loader2, Mail, Lock, User, ArrowRight, Sparkles, Brain, Target, Building2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { login } from '@/app/auth/login/action'
@@ -12,6 +12,7 @@ import { useToast } from '@/components/Toast'
 export default function LoginPage() {
     const [mode, setMode] = useState<'login' | 'signup'>('login')
     const [loading, setLoading] = useState(false)
+    const [selectedRole, setSelectedRole] = useState<'candidate' | 'recruiter'>('candidate')
     const toast = useToast()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -19,6 +20,11 @@ export default function LoginPage() {
         setLoading(true)
 
         const formData = new FormData(e.currentTarget)
+
+        // Add role to formData for signup
+        if (mode === 'signup') {
+            formData.set('role', selectedRole)
+        }
 
         let result
         if (mode === 'login') {
@@ -127,21 +133,72 @@ export default function LoginPage() {
 
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         {mode === 'signup' && (
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nama Lengkap</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                        <User className="h-4 w-4" />
+                            <>
+                                {/* Role Selection */}
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Daftar Sebagai</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedRole('candidate')}
+                                            className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${selectedRole === 'candidate'
+                                                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                                                }`}
+                                        >
+                                            <User className="h-4 w-4" />
+                                            <span className="font-semibold text-sm">Kandidat</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedRole('recruiter')}
+                                            className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${selectedRole === 'recruiter'
+                                                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                                                }`}
+                                        >
+                                            <Building2 className="h-4 w-4" />
+                                            <span className="font-semibold text-sm">Recruiter</span>
+                                        </button>
                                     </div>
-                                    <input
-                                        name="full_name"
-                                        type="text"
-                                        required
-                                        className="block w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2.5 text-slate-800 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm outline-none transition"
-                                        placeholder="Nama Lengkap Anda"
-                                    />
                                 </div>
-                            </div>
+
+                                {/* Full Name */}
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nama Lengkap</label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                            <User className="h-4 w-4" />
+                                        </div>
+                                        <input
+                                            name="full_name"
+                                            type="text"
+                                            required
+                                            className="block w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2.5 text-slate-800 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm outline-none transition"
+                                            placeholder="Nama Lengkap Anda"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Company Name - Only for Recruiter */}
+                                {selectedRole === 'recruiter' && (
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nama Perusahaan/Bisnis</label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                                <Building2 className="h-4 w-4" />
+                                            </div>
+                                            <input
+                                                name="company_name"
+                                                type="text"
+                                                required
+                                                className="block w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2.5 text-slate-800 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm outline-none transition"
+                                                placeholder="PT. Nama Perusahaan"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )}
 
                         <div className="space-y-1">

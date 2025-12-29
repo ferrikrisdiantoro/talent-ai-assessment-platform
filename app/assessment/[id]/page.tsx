@@ -297,26 +297,30 @@ export default function AssessmentRunner({ params }: { params: Promise<{ id: str
                         <div className="space-y-3">
                             {currentQuestion.type === 'multiple_choice' && (
                                 <div className="grid gap-3">
-                                    {(currentQuestion.options as any[])?.map((opt: any, idx: number) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => handleAnswer(opt.value)}
-                                            className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${responses[currentQuestion.id] === opt.value
+                                    {(currentQuestion.options as any[])?.map((opt: any, idx: number) => {
+                                        const optionLabel = opt.label || String.fromCharCode(65 + idx)
+                                        const isSelected = responses[currentQuestion.id]?.label === optionLabel
+                                        return (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleAnswer({ label: optionLabel, value: opt.value })}
+                                                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${isSelected
                                                     ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500/20'
                                                     : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/50'
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${responses[currentQuestion.id] === opt.value
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${isSelected
                                                         ? 'bg-blue-600 text-white'
                                                         : 'bg-slate-100 text-slate-600'
-                                                    }`}>
-                                                    {opt.label || String.fromCharCode(65 + idx)}
+                                                        }`}>
+                                                        {optionLabel}
+                                                    </div>
+                                                    <span className="font-medium text-slate-700">{opt.text}</span>
                                                 </div>
-                                                <span className="font-medium text-slate-700">{opt.text}</span>
-                                            </div>
-                                        </button>
-                                    ))}
+                                            </button>
+                                        )
+                                    })}
                                 </div>
                             )}
 
@@ -327,13 +331,13 @@ export default function AssessmentRunner({ params }: { params: Promise<{ id: str
                                             key={val}
                                             onClick={() => handleAnswer(val)}
                                             className={`flex flex-col items-center gap-2 p-3 md:p-4 rounded-xl border-2 transition-all duration-200 ${responses[currentQuestion.id] === val
-                                                    ? likertSelectedColors[val]
-                                                    : `border-slate-200 bg-white ${likertColors[val]}`
+                                                ? likertSelectedColors[val]
+                                                : `border-slate-200 bg-white ${likertColors[val]}`
                                                 }`}
                                         >
                                             <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-white text-lg transition-all ${responses[currentQuestion.id] === val
-                                                    ? likertNumberColors[val]
-                                                    : 'bg-slate-300'
+                                                ? likertNumberColors[val]
+                                                : 'bg-slate-300'
                                                 }`}>
                                                 {val}
                                             </div>
@@ -368,10 +372,10 @@ export default function AssessmentRunner({ params }: { params: Promise<{ id: str
                                 <div
                                     key={q.id}
                                     className={`w-2 h-2 rounded-full transition-all ${actualIdx === currentIndex
-                                            ? 'w-6 bg-blue-600'
-                                            : responses[q.id]
-                                                ? 'bg-emerald-500'
-                                                : 'bg-slate-300'
+                                        ? 'w-6 bg-blue-600'
+                                        : responses[q.id]
+                                            ? 'bg-emerald-500'
+                                            : 'bg-slate-300'
                                         }`}
                                 />
                             )

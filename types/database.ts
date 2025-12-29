@@ -1,7 +1,31 @@
 export type Profile = {
     id: string
     full_name: string | null
-    role: 'candidate' | 'admin'
+    role: 'candidate' | 'admin' | 'recruiter'
+    organization_id: string | null
+    invited_by: string | null
+    invitation_id: string | null
+    created_at: string
+}
+
+export type Organization = {
+    id: string
+    name: string
+    recruiter_id: string
+    description: string | null
+    created_at: string
+}
+
+export type Invitation = {
+    id: string
+    organization_id: string | null
+    recruiter_id: string
+    email: string
+    candidate_name: string | null
+    token: string
+    status: 'pending' | 'accepted' | 'expired'
+    expires_at: string
+    accepted_at: string | null
     created_at: string
 }
 

@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { randomBytes } from 'crypto'
 import { headers } from 'next/headers'
+import { sendInvitationEmail } from '@/lib/email'
 
 export async function inviteCandidate(formData: FormData) {
     const supabase = await createClient()
@@ -17,7 +18,7 @@ export async function inviteCandidate(formData: FormData) {
     // Check if user is a recruiter
     const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, full_name')
         .eq('id', user.id)
         .single()
 
@@ -35,7 +36,7 @@ export async function inviteCandidate(formData: FormData) {
     // Get organization
     const { data: organization } = await supabase
         .from('organizations')
-        .select('id')
+        .select('id, name')
         .eq('recruiter_id', user.id)
         .single()
 
@@ -105,9 +106,21 @@ export async function inviteCandidate(formData: FormData) {
     const protocol = host.includes('localhost') ? 'http' : 'https'
     const inviteLink = `${protocol}://${host}/invite/${token}`
 
+    // Send email invitation
+    const emailResult = await sendInvitationEmail({
+        to: email,
+        inviteLink,
+        candidateName: candidateName || undefined,
+        organizationName: organization?.name || 'Perusahaan',
+        recruiterName: profile?.full_name || undefined,
+    })
+
     return {
         success: true,
         inviteLink,
-        message: 'Undangan berhasil dibuat'
+        message: 'Undangan berhasil dibuat',
+        emailSent: emailResult.success,
+        emailError: emailResult.error
     }
 }
+

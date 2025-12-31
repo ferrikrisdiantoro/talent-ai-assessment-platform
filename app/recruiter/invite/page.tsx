@@ -9,6 +9,7 @@ import { inviteCandidate } from './action'
 export default function InviteCandidatePage() {
     const [loading, setLoading] = useState(false)
     const [inviteLink, setInviteLink] = useState<string | null>(null)
+    const [emailSent, setEmailSent] = useState(false)
     const [copied, setCopied] = useState(false)
     const router = useRouter()
     const toast = useToast()
@@ -24,7 +25,13 @@ export default function InviteCandidatePage() {
         if (result.error) {
             toast.error(result.error)
         } else if (result.success && result.inviteLink) {
-            toast.success('Undangan berhasil dibuat!')
+            if (result.emailSent) {
+                toast.success('Email undangan berhasil dikirim!')
+                setEmailSent(true)
+            } else {
+                toast.success('Undangan dibuat! (Email gagal, gunakan link manual)')
+                setEmailSent(false)
+            }
             setInviteLink(result.inviteLink)
         }
 
@@ -42,6 +49,7 @@ export default function InviteCandidatePage() {
 
     const handleNewInvite = () => {
         setInviteLink(null)
+        setEmailSent(false)
         setCopied(false)
     }
 
@@ -88,7 +96,7 @@ export default function InviteCandidatePage() {
                                     placeholder="kandidat@email.com"
                                 />
                             </div>
-                            <p className="text-xs text-slate-400 mt-1 ml-1">Link undangan akan digenerate untuk dibagikan ke kandidat</p>
+                            <p className="text-xs text-slate-400 mt-1 ml-1">Undangan akan dikirim langsung ke email kandidat</p>
                         </div>
 
                         <button
@@ -101,7 +109,7 @@ export default function InviteCandidatePage() {
                             ) : (
                                 <>
                                     <Send className="w-4 h-4" />
-                                    Buat Link Undangan
+                                    Kirim Undangan
                                 </>
                             )}
                         </button>
@@ -110,15 +118,28 @@ export default function InviteCandidatePage() {
             ) : (
                 <div className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm space-y-6">
                     <div className="text-center">
-                        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Check className="w-8 h-8 text-blue-600" />
+                        <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${emailSent ? 'bg-green-100' : 'bg-amber-100'}`}>
+                            {emailSent ? (
+                                <Mail className="w-8 h-8 text-green-600" />
+                            ) : (
+                                <Link2 className="w-8 h-8 text-amber-600" />
+                            )}
                         </div>
-                        <h2 className="text-xl font-bold text-slate-800 mb-2">Undangan Berhasil Dibuat!</h2>
-                        <p className="text-slate-500 text-sm">Bagikan link di bawah ini kepada kandidat via WhatsApp, Email, atau platform lainnya.</p>
+                        <h2 className="text-xl font-bold text-slate-800 mb-2">
+                            {emailSent ? 'Email Undangan Terkirim! ✉️' : 'Undangan Dibuat'}
+                        </h2>
+                        <p className="text-slate-500 text-sm">
+                            {emailSent
+                                ? 'Kandidat akan menerima email undangan dengan link untuk mendaftar dan mengerjakan assessment.'
+                                : 'Email gagal terkirim. Silakan bagikan link di bawah secara manual.'
+                            }
+                        </p>
                     </div>
 
                     <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Link Undangan</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                            {emailSent ? 'Link Cadangan (Opsional)' : 'Link Undangan (Bagikan Manual)'}
+                        </label>
                         <div className="flex items-center gap-2">
                             <div className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600 truncate">
                                 <Link2 className="w-4 h-4 inline mr-2 text-slate-400" />
@@ -137,9 +158,12 @@ export default function InviteCandidatePage() {
                         </div>
                     </div>
 
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                        <p className="text-sm text-amber-800">
-                            <strong>Catatan:</strong> Link ini berlaku selama 7 hari. Kandidat bisa langsung daftar dan mengerjakan assessment melalui link tersebut.
+                    <div className={`rounded-xl p-4 ${emailSent ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
+                        <p className={`text-sm ${emailSent ? 'text-green-800' : 'text-amber-800'}`}>
+                            {emailSent
+                                ? <><strong>✓ Email terkirim!</strong> Kandidat sudah menerima undangan. Link berlaku 7 hari.</>
+                                : <><strong>Catatan:</strong> Link ini berlaku selama 7 hari. Bagikan via WhatsApp atau platform lain.</>
+                            }
                         </p>
                     </div>
 
@@ -160,13 +184,12 @@ export default function InviteCandidatePage() {
                 </div>
             )}
 
-            {/* Tips */}
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
                 <h3 className="font-bold text-blue-800 mb-2">💡 Tips</h3>
                 <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Email undangan akan dikirim otomatis ke kandidat</li>
                     <li>• Kandidat akan otomatis terhubung dengan akun Anda setelah mendaftar</li>
                     <li>• Anda bisa melihat hasil assessment di menu "Daftar Kandidat"</li>
-                    <li>• Link bisa dibagikan via WhatsApp, Email, atau platform apapun</li>
                 </ul>
             </div>
         </div>

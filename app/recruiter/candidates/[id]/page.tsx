@@ -1,7 +1,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Mail, Calendar, BarChart3, Layers, AlertTriangle, Brain, Sparkles, Target, MessageSquare, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Mail, Calendar, BarChart3, Layers, AlertTriangle, Brain, Sparkles, Target, MessageSquare, AlertCircle, BookOpen } from 'lucide-react'
+import { getDimensionInterpretation, INTERPRETATIONS } from '@/lib/test-interpretations'
 import { DISCLAIMER_TEXT } from '@/lib/dimensions'
 import GeneratePDFButton from '@/app/admin/candidates/[id]/GeneratePDFButton'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
@@ -343,32 +344,48 @@ export default async function RecruiterCandidateDetailPage({
                                         )}
                                     </div>
 
-                                    {/* Dimension Scores */}
+                                    {/* Dimension Scores with Interpretation */}
                                     <div className="p-8">
-                                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                            {dimensionScores.map((score) => (
-                                                <div
-                                                    key={score.id}
-                                                    className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:shadow-md hover:border-slate-200 transition-all duration-300 group"
-                                                >
-                                                    <div className="flex justify-between items-start mb-3">
-                                                        <span className="font-semibold text-slate-700">{score.dimension}</span>
-                                                        <CategoryBadge score={score.normalized_score} size="sm" />
-                                                    </div>
+                                        <div className="grid gap-6 md:grid-cols-2">
+                                            {dimensionScores.map((score) => {
+                                                const interpretation = getDimensionInterpretation(moduleCode, score.dimension, score.normalized_score)
+                                                return (
+                                                    <div
+                                                        key={score.id}
+                                                        className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:shadow-md hover:border-slate-200 transition-all duration-300"
+                                                    >
+                                                        <div className="flex justify-between items-start mb-3">
+                                                            <span className="font-semibold text-slate-700">{score.dimension}</span>
+                                                            <CategoryBadge score={score.normalized_score} size="sm" />
+                                                        </div>
 
-                                                    <div className="flex items-end gap-2 mb-3">
-                                                        <span className="text-3xl font-bold text-slate-800">{score.normalized_score}</span>
-                                                    </div>
+                                                        <div className="flex items-end gap-2 mb-3">
+                                                            <span className="text-3xl font-bold text-slate-800">{score.normalized_score}</span>
+                                                            <span className="text-sm text-slate-400 mb-1">/100</span>
+                                                        </div>
 
-                                                    {/* Progress bar */}
-                                                    <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden">
-                                                        <div
-                                                            className={`h-full rounded-full transition-all duration-700 ${getCategoryGradient(score.normalized_score)}`}
-                                                            style={{ width: `${score.normalized_score}%` }}
-                                                        />
+                                                        {/* Progress bar */}
+                                                        <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden mb-4">
+                                                            <div
+                                                                className={`h-full rounded-full transition-all duration-700 ${getCategoryGradient(score.normalized_score)}`}
+                                                                style={{ width: `${score.normalized_score}%` }}
+                                                            />
+                                                        </div>
+
+                                                        {/* Interpretation Text */}
+                                                        {interpretation && (
+                                                            <div className="pt-3 border-t border-slate-200">
+                                                                <div className="flex items-start gap-2">
+                                                                    <BookOpen className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                                                                    <p className="text-sm text-slate-600 leading-relaxed">
+                                                                        {interpretation}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                </div>
-                                            ))}
+                                                )
+                                            })}
                                         </div>
                                     </div>
                                 </div>

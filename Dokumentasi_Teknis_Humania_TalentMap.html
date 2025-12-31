@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi Teknis - Humania TalentMap</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #1D4ED8;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        
+        /* Cover Page */
+        .cover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 24px;
+            text-align: center;
+            margin-bottom: 40px;
+            page-break-after: always;
+        }
+        
+        .cover h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .cover .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .cover .version {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .cover .date {
+            margin-top: 60px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Section */
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 6px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #334155;
+            margin: 24px 0 12px 0;
+        }
+        
+        p {
+            margin-bottom: 12px;
+            color: #475569;
+        }
+        
+        ul, ol {
+            margin: 12px 0 12px 24px;
+            color: #475569;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+        
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #334155;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        /* Code */
+        code {
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--primary-dark);
+        }
+        
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 16px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+        
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        /* Card */
+        .card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        
+        .card-desc {
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .flow-item {
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .flow-arrow {
+            color: var(--secondary);
+            font-size: 20px;
+        }
+        
+        /* Info box */
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        
+        .info-box.warning {
+            background: #fffbeb;
+            border-color: var(--warning);
+        }
+        
+        .info-box.success {
+            background: #ecfdf5;
+            border-color: var(--success);
+        }
+        
+        /* TOC */
+        .toc {
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+        
+        .toc ol {
+            margin: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--secondary);
+            font-size: 13px;
+        }
+        
+        @media print {
+            .container {
+                max-width: 100%;
+                padding: 20px;
+            }
+            
+            .section {
+                break-inside: avoid;
+            }
+            
+            .cover {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cover Page -->
+        <div class="cover">
+            <h1>📋 Humania TalentMap</h1>
+            <p class="subtitle">Platform Assessment Rekrutmen Berbasis AI</p>
+            <span class="version">Dokumentasi Teknis v1.0</span>
+            <p class="date">Diperbarui: 31 Desember 2025</p>
+        </div>
+        
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h3>📑 Daftar Isi</h3>
+            <ol>
+                <li><a href="#overview">Gambaran Umum Sistem</a></li>
+                <li><a href="#tech">Teknologi yang Digunakan</a></li>
+                <li><a href="#modules">Modul Assessment</a></li>
+                <li><a href="#architecture">Arsitektur Sistem</a></li>
+                <li><a href="#database">Struktur Database</a></li>
+                <li><a href="#scoring">Mekanisme Scoring</a></li>
+                <li><a href="#ai">Integrasi AI</a></li>
+                <li><a href="#roles">Manajemen Role & Akses</a></li>
+                <li><a href="#features">Fitur Utama</a></li>
+                <li><a href="#env">Konfigurasi Environment</a></li>
+                <li><a href="#deploy">Panduan Deployment</a></li>
+            </ol>
+        </div>
+        
+        <!-- Section 1: Overview -->
+        <div class="section" id="overview">
+            <h2 class="section-title">1. Gambaran Umum Sistem</h2>
+            <p>
+                <strong>Humania TalentMap</strong> adalah platform assessment rekrutmen berbasis web yang memungkinkan 
+                kandidat mengerjakan tes psikometri secara online. Sistem ini dirancang sebagai <em>decision support tool</em>, 
+                bukan penentu keputusan akhir dalam proses rekrutmen.
+            </p>
+            
+            <h3>Fitur Utama:</h3>
+            <ul>
+                <li>7 modul tes psikometri (DISC, Big Five, RIASEC, Kognitif, dll)</li>
+                <li>Scoring otomatis berbasis aturan (rule-based)</li>
+                <li>Analisis naratif menggunakan AI (Google Gemini)</li>
+                <li>Interpretasi hasil per jenis tes</li>
+                <li>Dashboard Admin dan Recruiter</li>
+                <li>Sistem undangan kandidat via email</li>
+                <li>Export laporan PDF</li>
+            </ul>
+            
+            <div class="info-box warning">
+                <strong>⚠️ Batasan Penting:</strong>
+                <ul style="margin-bottom: 0">
+                    <li>Tidak ada training machine learning atau deep learning</li>
+                    <li>Tidak ada klaim akurasi atau prediksi performa kerja</li>
+                    <li>Tidak ada webcam proctoring</li>
+                    <li>Sistem adalah MVP (Minimum Viable Product)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Section 2: Technology -->
+        <div class="section" id="tech">
+            <h2 class="section-title">2. Teknologi yang Digunakan</h2>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">🖥️ Frontend</div>
+                    <div class="card-desc">Next.js 16 (App Router), React 19, Tailwind CSS 4</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">⚙️ Backend</div>
+                    <div class="card-desc">Next.js Server Actions, API Routes</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">🗄️ Database</div>
+                    <div class="card-desc">Supabase (PostgreSQL) dengan RLS</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">🔐 Authentication</div>
+                    <div class="card-desc">Supabase Auth (Email/Password)</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">🤖 AI Engine</div>
+                    <div class="card-desc">Google Gemini 2.5 Flash</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📧 Email Service</div>
+                    <div class="card-desc">Resend API</div>
+                </div>
+            </div>
+            
+            <h3>Dependencies Utama:</h3>
+            <pre><code>{
+  "@google/generative-ai": "^0.24.1",
+  "@supabase/ssr": "^0.8.0",
+  "@supabase/supabase-js": "^2.88.0",
+  "next": "16.0.10",
+  "react": "19.2.1",
+  "resend": "^x.x.x",
+  "jspdf": "^3.0.4",
+  "lucide-react": "^0.561.0"
+}</code></pre>
+        </div>
+        
+        <!-- Section 3: Modules -->
+        <div class="section" id="modules">
+            <h2 class="section-title">3. Modul Assessment</h2>
+            <p>Sistem memiliki 7 modul tes yang mencakup berbagai aspek psikometri:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kode</th>
+                        <th>Nama Modul</th>
+                        <th>Tipe</th>
+                        <th>Dimensi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>COG-01</code></td>
+                        <td>Tes Penalaran & Problem Solving</td>
+                        <td><span class="badge badge-primary">Cognitive</span></td>
+                        <td>Logic, Pattern, Reasoning</td>
+                    </tr>
+                    <tr>
+                        <td><code>ATT-01</code></td>
+                        <td>Tes Ketelitian & Konsistensi</td>
+                        <td><span class="badge badge-warning">Attitude</span></td>
+                        <td>Accuracy, Speed, Consistency</td>
+                    </tr>
+                    <tr>
+                        <td><code>PER-01</code></td>
+                        <td>Profil Big Five</td>
+                        <td><span class="badge badge-success">Personality</span></td>
+                        <td>O, C, E, A, N</td>
+                    </tr>
+                    <tr>
+                        <td><code>PER-02</code></td>
+                        <td>Profil DISC</td>
+                        <td><span class="badge badge-success">Personality</span></td>
+                        <td>D, I, S, C</td>
+                    </tr>
+                    <tr>
+                        <td><code>WAI-01</code></td>
+                        <td>Tes Sikap & Tanggung Jawab</td>
+                        <td><span class="badge badge-warning">Attitude</span></td>
+                        <td>Integrity, Responsibility</td>
+                    </tr>
+                    <tr>
+                        <td><code>INT-01</code></td>
+                        <td>Tes Minat RIASEC</td>
+                        <td><span class="badge badge-primary">Interest</span></td>
+                        <td>R, I, A, S, E, C</td>
+                    </tr>
+                    <tr>
+                        <td><code>RES-01</code></td>
+                        <td>Tes Ketahanan AQ</td>
+                        <td><span class="badge badge-success">Personality</span></td>
+                        <td>Control, Ownership, Reach, Endurance</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Section 4: Architecture -->
+        <div class="section" id="architecture">
+            <h2 class="section-title">4. Arsitektur Sistem</h2>
+            
+            <h3>Alur Proses Assessment:</h3>
+            <div class="flow">
+                <span class="flow-item">1. Recruiter Invite</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item">2. Kandidat Daftar</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item">3. Kerjakan Tes</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item">4. Auto Scoring</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item">5. AI Analysis</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item">6. View Report</span>
+            </div>
+            
+            <h3>Struktur Folder:</h3>
+            <pre><code>├── app/
+│   ├── admin/           # Dashboard Admin
+│   ├── recruiter/       # Dashboard Recruiter
+│   ├── dashboard/       # Dashboard Kandidat
+│   ├── assessment/      # Halaman Tes
+│   ├── invite/          # Penerimaan Undangan
+│   ├── login/           # Autentikasi
+│   └── api/             # API Routes
+├── lib/
+│   ├── scoring.ts       # Mesin Scoring
+│   ├── ai-narrative.ts  # Integrasi Gemini AI
+│   ├── email.ts         # Email Service (Resend)
+│   ├── test-interpretations.ts  # Interpretasi Per Tes
+│   └── dimensions.ts    # Definisi Dimensi
+├── utils/
+│   └── supabase/        # Supabase Client
+└── supabase/
+    ├── schema.sql       # Skema Database
+    └── seed_questions.sql</code></pre>
+        </div>
+        
+        <!-- Section 5: Database -->
+        <div class="section" id="database">
+            <h2 class="section-title">5. Struktur Database</h2>
+            
+            <h3>Entity Relationship:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tabel</th>
+                        <th>Deskripsi</th>
+                        <th>Relasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>profiles</code></td>
+                        <td>Data profil user (nama, role, organisasi)</td>
+                        <td>→ auth.users</td>
+                    </tr>
+                    <tr>
+                        <td><code>organizations</code></td>
+                        <td>Data perusahaan/organisasi recruiter</td>
+                        <td>→ profiles (recruiter)</td>
+                    </tr>
+                    <tr>
+                        <td><code>invitations</code></td>
+                        <td>Token undangan kandidat</td>
+                        <td>→ organizations, profiles</td>
+                    </tr>
+                    <tr>
+                        <td><code>assessments</code></td>
+                        <td>Definisi modul tes</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><code>questions</code></td>
+                        <td>Bank soal per modul</td>
+                        <td>→ assessments</td>
+                    </tr>
+                    <tr>
+                        <td><code>assessment_sessions</code></td>
+                        <td>Sesi pengerjaan tes</td>
+                        <td>→ auth.users</td>
+                    </tr>
+                    <tr>
+                        <td><code>responses</code></td>
+                        <td>Jawaban kandidat</td>
+                        <td>→ sessions, questions</td>
+                    </tr>
+                    <tr>
+                        <td><code>scores</code></td>
+                        <td>Hasil skor per dimensi</td>
+                        <td>→ auth.users, assessments</td>
+                    </tr>
+                    <tr>
+                        <td><code>reports</code></td>
+                        <td>Laporan AI narrative</td>
+                        <td>→ auth.users</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="info-box">
+                <strong>💡 Row Level Security (RLS):</strong> 
+                Semua tabel dilindungi RLS. Kandidat hanya bisa melihat data miliknya sendiri. 
+                Recruiter hanya bisa melihat kandidat yang mereka undang.
+            </div>
+        </div>
+        
+        <!-- Section 6: Scoring -->
+        <div class="section" id="scoring">
+            <h2 class="section-title">6. Mekanisme Scoring</h2>
+            
+            <h3>Algoritma Scoring:</h3>
+            <ol>
+                <li><strong>Pengumpulan Jawaban:</strong> Jawaban dikelompokkan per dimensi berdasarkan <code>question.category</code></li>
+                <li><strong>Perhitungan Raw Score:</strong> Akumulasi nilai jawaban per dimensi</li>
+                <li><strong>Normalisasi:</strong> Konversi ke skala 0-100</li>
+                <li><strong>Kategorisasi:</strong> Penentuan level (Low/Medium/High)</li>
+            </ol>
+            
+            <h3>Formula Normalisasi:</h3>
+            <pre><code>normalized = ((raw - min) / (max - min)) × 100</code></pre>
+            
+            <h3>Threshold Kategori:</h3>
+            <table>
+                <tr>
+                    <th>Skor</th>
+                    <th>Kategori</th>
+                    <th>Warna</th>
+                </tr>
+                <tr>
+                    <td>0 - 40</td>
+                    <td><span class="badge" style="background:#fee2e2;color:#991b1b">Low</span></td>
+                    <td>Merah</td>
+                </tr>
+                <tr>
+                    <td>41 - 70</td>
+                    <td><span class="badge" style="background:#fef3c7;color:#92400e">Medium</span></td>
+                    <td>Kuning</td>
+                </tr>
+                <tr>
+                    <td>71 - 100</td>
+                    <td><span class="badge" style="background:#dcfce7;color:#166534">High</span></td>
+                    <td>Hijau</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Section 7: AI -->
+        <div class="section" id="ai">
+            <h2 class="section-title">7. Integrasi AI</h2>
+            
+            <h3>AI digunakan untuk:</h3>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">📝 Ringkasan Eksekutif</div>
+                    <div class="card-desc">Deskripsi profil kandidat secara keseluruhan</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">💪 Analisis Kekuatan</div>
+                    <div class="card-desc">Identifikasi area dengan skor tinggi</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📈 Area Pengembangan</div>
+                    <div class="card-desc">Identifikasi area yang perlu dikembangkan</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">❓ Saran Interview</div>
+                    <div class="card-desc">Pertanyaan wawancara untuk eksplorasi lebih lanjut</div>
+                </div>
+            </div>
+            
+            <h3>Interpretasi Statis Per Tes:</h3>
+            <p>
+                Selain AI narrative, sistem juga menampilkan <strong>interpretasi statis</strong> per dimensi berdasarkan 
+                standar psikometri. Ini memberikan penjelasan konsisten untuk setiap level skor (High/Medium/Low) 
+                tanpa bergantung pada AI.
+            </p>
+            
+            <div class="info-box success">
+                <strong>✅ Contoh Interpretasi DISC - Dominance (High):</strong><br>
+                "Tegas, kompetitif, dan berorientasi pada hasil. Suka mengambil tantangan dan memimpin. 
+                Cenderung langsung dalam komunikasi dan fokus pada pencapaian target."
+            </div>
+        </div>
+        
+        <!-- Section 8: Roles -->
+        <div class="section" id="roles">
+            <h2 class="section-title">8. Manajemen Role & Akses</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>Akses</th>
+                        <th>Fitur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Admin</strong></td>
+                        <td><code>/admin/*</code></td>
+                        <td>Kelola semua kandidat, modul tes, lihat semua laporan</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Recruiter</strong></td>
+                        <td><code>/recruiter/*</code></td>
+                        <td>Undang kandidat, lihat hasil kandidat yang diundang</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Candidate</strong></td>
+                        <td><code>/dashboard/*</code></td>
+                        <td>Kerjakan tes, lihat hasil sendiri</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Section 9: Features -->
+        <div class="section" id="features">
+            <h2 class="section-title">9. Fitur Utama</h2>
+            
+            <h3>✉️ Email Undangan Otomatis</h3>
+            <p>
+                Saat recruiter mengundang kandidat, sistem otomatis mengirim email undangan dengan link registrasi.
+                Email dikirim menggunakan <strong>Resend API</strong> dengan template HTML profesional.
+            </p>
+            
+            <h3>📊 Dashboard Real-time</h3>
+            <p>
+                Dashboard recruiter menampilkan statistik kandidat, status assessment, dan akses cepat ke hasil.
+            </p>
+            
+            <h3>📄 Export PDF</h3>
+            <p>
+                Laporan hasil assessment dapat diunduh dalam format PDF dengan layout profesional.
+            </p>
+            
+            <h3>🔒 Keamanan Data</h3>
+            <p>
+                Semua data dilindungi Row Level Security (RLS). Kandidat hanya bisa akses data sendiri, 
+                recruiter hanya bisa lihat kandidat yang mereka undang.
+            </p>
+        </div>
+        
+        <!-- Section 10: Environment -->
+        <div class="section" id="env">
+            <h2 class="section-title">10. Konfigurasi Environment</h2>
+            
+            <p>Buat file <code>.env</code> di root project dengan variabel berikut:</p>
+            
+            <pre><code># Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJxxxx...
+SUPABASE_SERVICE_ROLE_KEY=eyJxxxx...
+
+# AI (Google Gemini)
+GEMINI_API_KEY=AIzaSyxxxxxxxxx
+
+# Email (Resend)
+RESEND_API_KEY=re_xxxxxxxxxx</code></pre>
+            
+            <div class="info-box warning">
+                <strong>⚠️ Penting:</strong> Jangan pernah commit file <code>.env</code> ke repository. 
+                Pastikan sudah ada di <code>.gitignore</code>.
+            </div>
+        </div>
+        
+        <!-- Section 11: Deployment -->
+        <div class="section" id="deploy">
+            <h2 class="section-title">11. Panduan Deployment</h2>
+            
+            <h3>Deployment ke Vercel (Rekomendasi):</h3>
+            <ol>
+                <li>Push code ke GitHub repository</li>
+                <li>Buka <a href="https://vercel.com">vercel.com</a> dan import project</li>
+                <li>Tambahkan environment variables di Settings → Environment Variables</li>
+                <li>Deploy!</li>
+            </ol>
+            
+            <h3>Command Development:</h3>
+            <pre><code># Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start</code></pre>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 Humania TalentMap. All rights reserved.</p>
+            <p>Dokumentasi ini dibuat secara otomatis.</p>
+        </div>
+    </div>
+</body>
+</html>

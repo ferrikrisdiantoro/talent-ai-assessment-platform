@@ -355,9 +355,7 @@ Copyright © 2025 Humania TalentMap. All rights reserved.
 
 ---
 
-<div align="center">
-  <p>Made with ❤️ for better recruitment</p>
-  
+<div align="center">  
   [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&logo=github)](https://github.com)
   [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com)
 </div>

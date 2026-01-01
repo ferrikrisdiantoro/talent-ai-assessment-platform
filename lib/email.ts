@@ -1,9 +1,15 @@
 'use server'
 
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Create Gmail transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+    },
+})
 
 interface InvitationEmailParams {
     to: string
@@ -14,7 +20,7 @@ interface InvitationEmailParams {
 }
 
 /**
- * Send invitation email to candidate using Resend
+ * Send invitation email to candidate using Gmail SMTP
  */
 export async function sendInvitationEmail({
     to,
@@ -23,10 +29,10 @@ export async function sendInvitationEmail({
     organizationName,
 }: InvitationEmailParams): Promise<{ success: boolean; error?: string }> {
 
-    // Check if Resend API key is configured
-    if (!process.env.RESEND_API_KEY) {
-        console.warn('Resend API key not configured. Email not sent.')
-        return { success: false, error: 'Email tidak terkirim (API key belum dikonfigurasi)' }
+    // Check if Gmail credentials are configured
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+        console.warn('Gmail credentials not configured. Email not sent.')
+        return { success: false, error: 'Email tidak terkirim (Gmail belum dikonfigurasi)' }
     }
 
     const greeting = candidateName ? `Halo ${candidateName},` : 'Halo,'
@@ -109,22 +115,32 @@ export async function sendInvitationEmail({
     </html>
     `
 
+    const textContent = `
+${greeting}
+
+Anda telah diundang oleh ${organizationName} untuk mengikuti proses assessment rekrutmen melalui platform Humania TalentMap.
+
+Silakan klik link berikut untuk memulai:
+${inviteLink}
+
+Link ini berlaku selama 7 hari.
+
+---
+Email ini dikirim secara otomatis oleh sistem Humania TalentMap.
+    `.trim()
+
     try {
-        const { error } = await resend.emails.send({
-            from: 'Humania TalentMap <noreply@resend.dev>',
-            to: [to],
+        await transporter.sendMail({
+            from: `"Humania TalentMap" <${process.env.GMAIL_USER}>`,
+            to: to,
             subject: `Undangan Assessment dari ${organizationName}`,
+            text: textContent,
             html: htmlContent,
         })
 
-        if (error) {
-            console.error('Resend error:', error)
-            return { success: false, error: error.message }
-        }
-
         return { success: true }
     } catch (error) {
-        console.error('Error sending email:', error)
+        console.error('Gmail error:', error)
         return {
             success: false,
             error: error instanceof Error ? error.message : 'Gagal mengirim email'
